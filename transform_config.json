@@ -1,0 +1,189 @@
+{
+    "sequence": "2",
+    "operation": "transform_data",
+    "source": {
+        "tablename": "employee",
+        "schema": ["id", "first_name", "lastname", "subscription_date", "monthly_fee", "permanent"]
+    },
+    "destination": {
+        "in-memory": 0,
+        "schema": {
+            "tablename": "mrn_mapped_patient",
+            "schema": ["id", "first_name", "lastname", "subscription_date", "monthly_fee", "permanent", "pay_grade", "full_name", "employee_guid"]
+        }
+    },
+    "derivedcolumns": [
+    {
+            "column_name": "full_name",
+            "dbtype": "string",
+            "rules": [{
+                "sequence": 1,
+                "type": "expression",
+                "expr": "first_name + \" \" + first_name"
+            }]
+        } ,
+        {
+            "column_name": "cust_uid",
+            "dbtype": "string",
+            "rules": [{
+                "sequence": 2,
+                "type": "function",
+                "function": "generate_uuid",
+                "expr": "generate_uuid()"
+            }]
+        },      
+       
+        {
+            "column_name":"string_nteq",
+              "dbtype":"boolean",
+              "rules":[{
+                 "sequence":3,
+                  "type":"expression",
+                  "function":null,
+                  "expr": "first_name != 'Sheryl'"
+              }] 
+          },
+         
+          { "column_name":"country_in",
+              "dbtype":"string",
+              "rules":[{
+                  "_comment":"in is not supported.. simpleeval disables complex Python structures like list, dict, set, etc. by default for security reasons.",
+                  "sequence":4,
+                  "type":"condition",
+                  "function":null,
+                  "expr": "'Tech' if country == 'Oman' or country == 'United States of America' else 'Non-Tech'"
+              }]
+          }
+          ,
+           { "column_name":"sub_date_fun",
+              "dbtype":"boolean",
+              "rules":[{
+                  "sequence":5,
+                  "type":"expression",
+                  "function":null,
+                  "expr": "subscription_date < to_date('2020-08-24', 'yyyy-MM-dd')"
+              }]
+          },
+        {
+          "column_name":"string_like_%",
+            "dbtype":"string",
+            "rules":[{
+                "_comment":"custom function like. Use expression ",
+                "sequence":6,
+                "type":"expression",
+                "function":null,
+                "expr": "like(country, \"%bou%\")"
+            }] 
+        },
+         {
+          "column_name":"string_like_complete",
+            "dbtype":"string",
+            "rules":[{
+                "_comment":"custom function like. Use expression ",
+                "sequence":7,
+                "type":"expression",
+                "function":null,
+                "expr": "like(country, \"Djibouti\")"
+            }] 
+        },
+        {
+            "column_name": "replace",
+            "dbtype": "string",
+            "rules": [
+              {
+                "sequence": 8,
+                "type": "expression",
+                "expr": "replace(first_name,'B','Bo')",
+                "function": null
+              }
+            ]
+          },
+          {
+            "column_name": "replace_word",
+            "dbtype": "string",
+            "rules": [
+              {
+                "sequence": 9,
+                "type": "expression",
+                "expr": "replace(first_name,'Al','Abc')",
+                "function": null
+              }
+            ]
+          }
+          ,{
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "arithmetic1",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 10,
+                "type": "expression",
+                "function": null,
+                "expr": "monthly_fee+customer_id" 
+            }]
+        }
+        ,{
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "arithmetic2",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 11,
+                "type": "expression",
+                "function": null,
+                "expr": "monthly_fee-customer_id" 
+            }]
+        },
+        {
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "arithmetic3",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 12,
+                "type": "expression",
+                "function": null,
+                "expr": "monthly_fee*customer_id" 
+            }]
+        }
+        ,{
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "arithmetic4",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 13,
+                "type": "expression",
+                "function": null,
+                "expr": "monthly_fee/customer_id" 
+            }]
+        }
+        ,{
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "arithmetic5",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 14,
+                "type": "expression",
+                "function": null,
+                "expr": "monthly_fee%customer_id" 
+            }]
+        }
+         ,{
+            "_comment": "Operator available : +,-,,*,/,//,%",
+            "column_name": "sal_incby10percent",
+            "dbtype": "float",
+            "rules": [{
+                "sequence": 15,
+                "type": "expression",
+                "function": null,
+                "expr": "(monthly_fee*0.1)+monthly_fee" 
+            }]
+        },
+        { "column_name":"subcond",
+              "dbtype":"string",
+              "rules":[{
+                  "sequence":16,
+                  "type":"condition",
+                  "function":null,
+                  "expr": "'Before 2020' if subscription_date < to_date('2020-08-24', 'yyyy-MM-dd') else 'After 2020'"
+              }]
+          }
+    ]
+}
